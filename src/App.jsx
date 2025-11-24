@@ -2,7 +2,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Papa from 'papaparse'
 import arrowDownIcon from './assets/icons/basic_magnifier.svg'
 import arrowUpIcon from './assets/icons/arrows_circle_up.svg'
-import refreshIcon from './assets/icons/arrows_rotate_anti.svg'
 import logo from './assets/logo.webp'
 import './App.css'
 
@@ -25,6 +24,8 @@ const TODAY = (() => {
 })()
 
 const INITIAL_VISIBLE_DAYS = 14
+const EVENTS_CSV_URL =
+  'https://raw.githubusercontent.com/aendu/latin-events-be/refs/heads/main/public/events.csv'
 
 const INITIAL_FILTERS = {
   region: 'Region Bern',
@@ -61,7 +62,6 @@ function App() {
   const [events, setEvents] = useState([])
   const [filters, setFilters] = useState(INITIAL_FILTERS)
   const [loading, setLoading] = useState(true)
-  const [refreshing, setRefreshing] = useState(false)
   const [error, setError] = useState('')
   const [filtersOpen, setFiltersOpen] = useState(true)
   const [showFloatingToggle, setShowFloatingToggle] = useState(false)
@@ -76,8 +76,8 @@ function App() {
         setLoading(true)
       }
       setError('')
-      const cacheParam = cacheBust ? `?v=${cacheBust}` : ''
-      Papa.parse(`/events.csv${cacheParam}`, {
+      const csvUrl = cacheBust ? `${EVENTS_CSV_URL}?v=${cacheBust}` : EVENTS_CSV_URL
+      Papa.parse(csvUrl, {
         download: true,
         header: true,
         skipEmptyLines: true,
@@ -92,13 +92,11 @@ function App() {
           })
           setEvents(parsed)
           setLoading(false)
-          setRefreshing(false)
         },
         error: (err) => {
           setError('Die Eventdaten konnten nicht geladen werden.')
           console.error(err)
           setLoading(false)
-          setRefreshing(false)
         },
       })
     },
@@ -241,33 +239,6 @@ function App() {
     return FULL_DATE.format(dateObj)
   }
 
-  const runCrawler = useCallback(async () => {
-    const response = await fetch('/api/refresh-events', { method: 'POST' })
-    if (!response.ok) {
-      let message = 'Aktualisierung fehlgeschlagen.'
-      try {
-        const payload = await response.json()
-        message = payload?.error || message
-      } catch (err) {
-        // ignore JSON parse errors
-      }
-      throw new Error(message)
-    }
-  }, [])
-
-  const handleRefresh = async () => {
-    setRefreshing(true)
-    setError('')
-    try {
-      await runCrawler()
-      loadCsvEvents({ cacheBust: Date.now(), silent: true })
-    } catch (err) {
-      console.error(err)
-      setError(err.message || 'Aktualisierung fehlgeschlagen.')
-      setRefreshing(false)
-    }
-  }
-
   const handleFloatingToggle = () => {
     autoCollapseRef.current = false;
     window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -279,7 +250,6 @@ function App() {
   const visibleCount = visibleEvents.length
   const totalCount = filteredEvents.length
   const resultsLabel = hasMoreEvents ? `${visibleCount} von ${totalCount} Events` : `${visibleCount} Events`
-  const isRefreshDisabled = refreshing || loading
 
   return (
     <div className="app-shell">
@@ -292,16 +262,6 @@ function App() {
             </div>
           </div>
           <div className="header-actions">
-            <button
-              type="button"
-              className={`refresh-button ${refreshing ? 'is-busy' : ''}`}
-              onClick={handleRefresh}
-              disabled={isRefreshDisabled}
-              aria-label="Eventdaten aktualisieren"
-              title="Eventdaten aktualisieren"
-            >
-              <img src={refreshIcon} alt="" aria-hidden="true" className="icon" />
-            </button>
             <button
               type="button"
               className="filters-toggle"
