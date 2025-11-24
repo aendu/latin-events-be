@@ -12,7 +12,7 @@ from bs4 import BeautifulSoup, Tag
 
 BASE_URL = "https://www.latino.ch"
 LISTING_PATH = "/events"
-TARGET_SPAN_DAYS = 30
+TARGET_DAY_SPAN = 90
 OUTPUT_PATH = Path("data/events.csv")
 PUBLIC_PATH = Path("public/events.csv")
 FIELDNAMES = [
@@ -284,6 +284,7 @@ def main() -> None:
     collected: List[EventEntry] = []
     min_date: Optional[date] = None
     max_date: Optional[date] = None
+    target_end_date = date.today() + timedelta(days=TARGET_DAY_SPAN)
     last_date_for_scroll: Optional[str] = None
     attempts_without_new = 0
     while True:
@@ -301,11 +302,7 @@ def main() -> None:
             added_this_round += 1
         if chunk_dates:
             last_date_for_scroll = chunk_dates[-1]
-        if (
-            min_date
-            and max_date
-            and (max_date - min_date).days >= TARGET_SPAN_DAYS
-        ):
+        if max_date and max_date >= target_end_date:
             break
         if not chunk_dates or not last_date_for_scroll:
             break
