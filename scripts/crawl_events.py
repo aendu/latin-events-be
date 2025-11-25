@@ -121,15 +121,20 @@ def determine_region(city_text: str) -> str:
         "bern": "Region Bern",
         "thun": "Region Bern",
         "biel": "Region Bern",
+        "fribourg": "Region Bern",
+        "fribourg/fribourg": "Region Bern",
+        "fribourg/friburg": "Region Bern",
+        "friburg": "Region Bern",
+        "düdingen": "Region Bern",        
         "zürich": "Region Zürich",
         "zuerich": "Region Zürich",
         "zurich": "Region Zürich",
         "winterthur": "Region Zürich",
         "schaffhausen": "Ost Schweiz",
-        "luzern": "Region Luzern",
-        "kriens": "Region Luzern",
-        "rotkreuz": "Region Luzern",
-        "zug": "Region Luzern",
+        "luzern": "Zentral Schweiz",
+        "kriens": "Zentral Schweiz",
+        "rotkreuz": "Zentral Schweiz",
+        "zug": "Zentral Schweiz",
         "solothurn": "Region Solothurn & Aarau",
         "aarau": "Region Solothurn & Aarau",
         "wohlen": "Region Solothurn & Aarau",
@@ -145,16 +150,12 @@ def determine_region(city_text: str) -> str:
         "genève": "West Schweiz",
         "neuchâtel": "West Schweiz",
         "neuchatel": "West Schweiz",
-        "fribourg": "West Schweiz",
-        "fribourg/fribourg": "West Schweiz",
-        "fribourg/friburg": "West Schweiz",
-        "friburg": "West Schweiz",
-        "sion": "West Schweiz",
-        "martigny": "West Schweiz",
-        "lugano": "West Schweiz",
-        "locarno": "West Schweiz",
+        "sion": "Wallis",
+        "martigny": "Wallis",
+        "brig": "Wallis",        
+        "lugano": "Tessin",
+        "locarno": "Tessin",
         "basel": "Region Basel",
-        "düdingen": "Region Bern",
     }
     for needle, region in city_based.items():
         if needle in lc:
@@ -162,18 +163,22 @@ def determine_region(city_text: str) -> str:
     match = re.search(r"(\d{4})", city_text)
     if match:
         plz = int(match.group(1))
-        if 3000 <= plz < 4000:
-            return "Region Bern"
-        if 4500 <= plz < 5750:
-            return "Region Solothurn & Aarau"
-        if 6000 <= plz < 6700:
-            return "Region Luzern"
-        if 8000 <= plz < 9000:
-            return "Region Zürich"
-        if 9000 <= plz < 10000:
-            return "Ost Schweiz"
-        if 1000 <= plz < 3000 or 4000 <= plz < 4500 or 6500 <= plz < 7000:
+        if 1000 <= plz < 1700 or 2000 <= plz < 3000:
             return "West Schweiz"
+        if 1700 <= plz < 1800 or 3000 <= plz < 3900:
+            return "Region Bern"
+        if 1800 <= plz < 2000 or 3900 <= plz < 4000:
+            return "Wallis"     
+        if 4000 <= plz < 4500:
+            return "Region Basel"                   
+        if 4500 <= plz < 6000:
+            return "Region Solothurn & Aarau"
+        if 6000 <= plz < 6500:
+            return "Zentral Schweiz"
+        if 6500 <= plz < 7000:
+            return "Tessin"
+        if 7000 <= plz < 8000 or 8200 <= plz :
+            return "Ost Schweiz"
     return "Region Zürich"
 
 
