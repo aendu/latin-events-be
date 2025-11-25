@@ -251,14 +251,23 @@ body {
   padding: 0.6rem 0.75rem;
   font-size: 1rem;
   font-family: inherit;
-  transition: border-color 0.2s;
   background: var(--color-chip);
+  color: var(--color-highlight);
 }
 
 .filter-group select:focus,
 .filter-group input:focus {
   border-color: var(--color-accent);
-  outline: none;
+}
+
+.filter-group select {
+  background-image: url("data:image/svg+xml;utf8,<svg height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+  background-repeat: no-repeat;
+  background-position-x: 99%;
+  background-position-y: 50%;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  fill: var(--color-highlight);
 }
 
 .state-message {
