@@ -1,0 +1,10 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+# Skip build if only files under public/ changed between last deploy and this commit.
+[build.ignore]
+  command = """
+    CHANGED=$(git diff --name-only "$CACHED_COMMIT_REF" "$COMMIT_REF")
+    echo "$CHANGED" | grep -qv '^public/' || exit 0
+  """
