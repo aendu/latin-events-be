@@ -249,7 +249,7 @@ function App() {
   const toggleIcon = filtersOpen ? arrowUpIcon : arrowDownIcon
   const visibleCount = visibleEvents.length
   const totalCount = filteredEvents.length
-  const resultsLabel = hasMoreEvents ? `${visibleCount} von ${totalCount} Events` : `${visibleCount} Events`
+  const resultsLabel = hasMoreEvents ? `${visibleCount}/${totalCount} Events` : `${visibleCount} Events`
 
   return (
     <div className="app-shell">
@@ -321,35 +321,37 @@ function App() {
             />
           </div>
         </section>
-
-        <div className="results-meta">
-            <span>{resultsLabel}</span>
-            {filters.region !== 'all' && (
-              <span className="active-filter">
-                Region: {filters.region}
-                <button
-                  type="button"
-                  className="chip-close"
-                  onClick={() => handleFilterChange('region', 'all')}
-                  aria-label="Region Filter entfernen"
-                >
-                  ×
-                </button>
-              </span>
-            )}
-            {filters.label !== 'all' && (
-              <span className="active-filter">
-                Event-Typ: {filters.label === 'ohne-kurse' ? 'ohne Kurse' : filters.label}
-                <button
-                  type="button"
-                  className="chip-close"
-                  onClick={() => handleFilterChange('label', 'all')}
-                  aria-label="Event-Typ Filter entfernen"
-                >
-                  ×
-                </button>
-              </span>
-            )}
+        
+        <div className="hscroll">
+            <div className="results-meta">
+              <span>{resultsLabel}</span>
+              {filters.region !== 'all' && (
+                <span className="active-filter">
+                  Region: {filters.region}
+                  <button
+                    type="button"
+                    className="chip-close"
+                    onClick={() => handleFilterChange('region', 'all')}
+                    aria-label="Region Filter entfernen"
+                  >
+                    ×
+                  </button>
+                </span>
+              )}
+              {filters.label !== 'all' && (
+                <span className="active-filter">
+                  Event-Typ: {filters.label === 'ohne-kurse' ? 'ohne Kurse' : filters.label}
+                  <button
+                    type="button"
+                    className="chip-close"
+                    onClick={() => handleFilterChange('label', 'all')}
+                    aria-label="Event-Typ Filter entfernen"
+                  >
+                    ×
+                  </button>
+                </span>
+              )}
+            </div>
           </div>
       </div>
 

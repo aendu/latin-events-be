@@ -119,7 +119,7 @@ body {
 }
 
 .eyebrow {
-  font-size: 1.2rem;
+  font-size: 1rem;
   letter-spacing: 0.15em;
   text-transform: uppercase;
   color: var(--color-accent-dark);
@@ -145,7 +145,7 @@ body {
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 15px 40px rgba(34, 24, 20, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.4);
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   gap: 1rem;
   overflow: hidden;
   max-height: 0;
@@ -229,14 +229,21 @@ body {
   width: 100%;
 }
 
+.hscroll{
+  overflow-x: auto;
+}
+
 .results-meta {
   display: flex;
-  flex-wrap: wrap;
   gap: 0.8rem;
-  align-items: center;
   padding: 1rem 0 0;
   color: var(--color-highlight);
   font-weight: 500;
+  align-items: baseline;
+}
+
+.results-meta span {
+  flex: 1 0 auto;
 }
 
 .active-filter {
@@ -438,18 +445,18 @@ body {
   }
 
   .filters-card {
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
   }
 
   .sticky-panel {
     margin: -1rem -1rem 1rem;
     padding: 1rem;
-    max-height: 170px;
+    height: 140px;
     overflow: hidden
 }
 
   .sticky-panel.is-open {
-    max-height: 100vh;
+    height: auto;
   }
 
   .floating-filter-button {
@@ -469,7 +476,7 @@ body {
 
   .mobile-day-header {
     position: sticky;
-    top: 170px;
+    top: 140px;
     background: var(--color-chip);
     padding: .4rem .8rem;
     font-weight: 600;
@@ -479,7 +486,8 @@ body {
     border-radius: 0;
     z-index: 18;
     box-shadow: 0 6px 15px #00000014;
-    margin-bottom: .75rem
+    margin-bottom: .75rem;
+    margin-top: -10px;
 }
 
   .event-card {
