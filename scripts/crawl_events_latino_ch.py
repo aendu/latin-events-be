@@ -199,7 +199,7 @@ def build_events_from_cluster(event_div: Tag, event_date: str) -> Iterable[Event
     host, city = extract_address(event_div)
     flyer = extract_flyer(event_div)
     url = extract_url(event_div)
-    base_labels = normalize_labels(
+    labels = normalize_labels(
         [
             clean_text(label.get_text())
             for label in event_div.select(".label")
@@ -221,7 +221,6 @@ def build_events_from_cluster(event_div: Tag, event_date: str) -> Iterable[Event
         name_text = clean_text(li_copy.get_text())
         if not name_text:
             continue
-        labels_with_rules = apply_name_rules(name_text, list(base_labels))
         entries.append(
             EventEntry(
                 date=event_date,
@@ -233,7 +232,7 @@ def build_events_from_cluster(event_div: Tag, event_date: str) -> Iterable[Event
                 city=city,
                 region=region,
                 source="latino.ch",
-                labels=labels_with_rules,
+                labels=apply_name_rules(name_text, labels)
             )
         )
     return entries

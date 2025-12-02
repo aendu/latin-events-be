@@ -25,7 +25,9 @@ const TODAY = (() => {
 
 const INITIAL_VISIBLE_DAYS = 14
 const EVENTS_CSV_URL =
-  'https://raw.githubusercontent.com/aendu/latin-events-be/refs/heads/main/public/events.csv'
+  (typeof window !== 'undefined' && window.location.hostname === 'localhost')
+    ? '/events.csv'
+    : 'https://raw.githubusercontent.com/aendu/latin-events-be/refs/heads/main/public/events.csv'
 
 const INITIAL_FILTERS = {
   region: 'Region Bern',
@@ -150,7 +152,8 @@ function App() {
       if (filters.label === 'ohne-kurse') {
         const hasEventTypes = event.labels.length > 0
         const onlyKurs = hasEventTypes && event.labels.every((eventType) => eventType === 'kurs')
-        if (onlyKurs) {
+        const onlyShopping = hasEventTypes && event.labels.every((eventType) => eventType === 'shopping')
+        if (onlyKurs || onlyShopping) {
           return false
         }
       } else if (filters.label !== 'all' && !event.labels.includes(filters.label)) {
