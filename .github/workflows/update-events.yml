@@ -28,7 +28,7 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run crawler
-        run: python scripts/crawl_events.py
+        run: python scripts/crawl_all_events.py
 
       - name: Commit changes if any
         id: commit
@@ -39,7 +39,7 @@ jobs:
           fi
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/events.csv public/events.csv
+          git add public/events.csv
           git commit -m "chore: update events data"
           echo "committed=true" >> $GITHUB_OUTPUT
 
