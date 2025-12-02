@@ -25,7 +25,7 @@ const TODAY = (() => {
 
 const INITIAL_VISIBLE_DAYS = 14
 const EVENTS_CSV_URL =
-  '/public/events.csv'
+  'https://raw.githubusercontent.com/aendu/latin-events-be/refs/heads/main/public/events.csv'
 
 const INITIAL_FILTERS = {
   region: 'Region Bern',
