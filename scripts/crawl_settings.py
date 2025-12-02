@@ -65,8 +65,8 @@ def enable_http_logging() -> None:
     """
     Turn on verbose HTTP logging for requests/urllib3. Useful during debugging.
     """
-    http.client.HTTPConnection.debuglevel = 1
-    logging.basicConfig(level=logging.DEBUG)
-    logging.getLogger("urllib3").setLevel(logging.DEBUG)
-    logging.getLogger("requests").setLevel(logging.DEBUG)
+    http.client.HTTPConnection.debuglevel = 0                ### 0, 1, 2 (highest level)
+    logging.basicConfig(level=logging.WARN)
+    logging.getLogger("urllib3").setLevel(logging.WARN)
+    logging.getLogger("requests").setLevel(logging.WARN)
 
