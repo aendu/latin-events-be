@@ -14,6 +14,7 @@ FIELDNAMES = [
     "host",
     "city",
     "region",
+    "source",
     "labels",
 ]
 
@@ -69,4 +70,3 @@ def enable_http_logging() -> None:
     logging.basicConfig(level=logging.WARN)
     logging.getLogger("urllib3").setLevel(logging.WARN)
     logging.getLogger("requests").setLevel(logging.WARN)
-

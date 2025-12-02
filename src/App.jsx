@@ -25,7 +25,7 @@ const TODAY = (() => {
 
 const INITIAL_VISIBLE_DAYS = 14
 const EVENTS_CSV_URL =
-  'https://raw.githubusercontent.com/aendu/latin-events-be/refs/heads/main/public/events.csv'
+  '/public/events.csv'
 
 const INITIAL_FILTERS = {
   region: 'Region Bern',
@@ -54,6 +54,7 @@ function normalizeRow(row) {
     host: row.host || '',
     city: row.city || '',
     region: row.region || '',
+    source: row.source || '',
     labels,
   }
 }
@@ -414,6 +415,7 @@ function App() {
                               {event.name}
                             </a>
                             {event.host && <p className="host">{event.host}</p>}
+                            {event.source && <p className="source-note">Provided by {event.source}</p>}
                           </div>
                         </div>
                       </td>
@@ -478,6 +480,11 @@ function App() {
                               {event.name}
                             </a>
                             {event.host && <p className="host subtle-link">{event.host}</p>}
+                            {event.source && (
+                              <p className="source-note">
+                                Provided by {event.source}
+                              </p>
+                            )}
                           </div>
                           <div className="event-card__label-pill">
                             {event.labels.length ? (

@@ -22,7 +22,11 @@ def read_events(path: Path) -> list[dict]:
         return []
     with path.open("r", newline="", encoding="utf-8") as handle:
         reader = csv.DictReader(handle)
-        return [row for row in reader]
+        rows = []
+        for row in reader:
+            row.setdefault("source", "")
+            rows.append(row)
+        return rows
 
 
 def normalize_name(name: str) -> str:

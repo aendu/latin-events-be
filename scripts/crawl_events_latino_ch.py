@@ -47,6 +47,7 @@ class EventEntry:
     host: str
     city: str
     region: str
+    source: str
     labels: Sequence[str]
 
     def to_row(self) -> dict:
@@ -59,6 +60,7 @@ class EventEntry:
             "host": self.host,
             "city": self.city,
             "region": self.region,
+            "source": self.source,
             "labels": "|".join(sorted(set(self.labels))),
         }
 
@@ -222,6 +224,7 @@ def build_events_from_cluster(event_div: Tag, event_date: str) -> Iterable[Event
                 host=host,
                 city=city,
                 region=region,
+                source="latino.ch",
                 labels=labels,
             )
         )
@@ -254,6 +257,7 @@ def build_event_from_block(event_div: Tag, event_date: str) -> Iterable[EventEnt
             host=host,
             city=city,
             region=region,
+            source="latino.ch",
             labels=labels,
         )
     ]

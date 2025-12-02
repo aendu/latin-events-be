@@ -334,6 +334,7 @@ body {
   display: inline-block;
   border-radius: 0.8rem;
   overflow: hidden;
+  flex: 0 0 auto;
 }
 
 .flyer-thumb {
@@ -373,6 +374,11 @@ body {
   margin: 0.25rem 0 0;
   color: var(--color-muted);
   font-size: 0.9rem;
+}
+
+.source-note {
+  color: var(--color-muted);
+  font-size: 0.625rem;
 }
 
 .city {

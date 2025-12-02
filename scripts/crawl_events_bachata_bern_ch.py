@@ -46,6 +46,7 @@ class EventEntry:
     host: str
     city: str
     region: str
+    source: str
     labels: Sequence[str]
 
     def to_row(self) -> dict:
@@ -58,6 +59,7 @@ class EventEntry:
             "host": self.host,
             "city": self.city,
             "region": self.region,
+            "source": self.source,
             "labels": "|".join(sorted(set(self.labels))),
         }
 
@@ -212,6 +214,7 @@ def build_event_entry(item: dict) -> EventEntry:
         host=build_host(item.get("organizer")),
         city=city,
         region=determine_region(city),
+        source="bachata-bern.ch",
         labels=build_labels(item),
     )
 
