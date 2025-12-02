@@ -31,6 +31,13 @@ def normalize_labels(raw_labels: Iterable[str]) -> List[str]:
             normalized.append(value)
     return normalized
 
+
+def apply_name_rules(name: str, labels: List[str]) -> List[str]:
+    cleaned_name = name.lower()
+    if "dancing queens" in cleaned_name and "shopping" not in labels:
+        labels.append("shopping")
+    return labels
+
 BASE_URL = "https://www.latino.ch"
 LISTING_PATH = "/events"
 OUTPUT_PATH = DATA_DIR / "events_latino_ch.csv"
@@ -199,6 +206,7 @@ def build_events_from_cluster(event_div: Tag, event_date: str) -> Iterable[Event
             if clean_text(label.get_text())
         ]
     )
+    labels = apply_name_rules(name_text, labels)
     region = determine_region(city)
     title_block = event_div.select_one(".title")
     if not title_block:
@@ -239,6 +247,7 @@ def build_event_from_block(event_div: Tag, event_date: str) -> Iterable[EventEnt
     time_el = event_div.select_one(".col-xs-5 span")
     title_el = event_div.select_one(".title")
     name = clean_text(title_el.get_text() if title_el else "")
+    labels = apply_name_rules(name, labels)
     labels = normalize_labels(
         [
             clean_text(label.get_text())
