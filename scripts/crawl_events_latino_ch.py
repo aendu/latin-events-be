@@ -1,36 +1,23 @@
 import csv
 import re
-import shutil
 from dataclasses import dataclass
 from datetime import date, datetime, timedelta
-from pathlib import Path
 from typing import Iterable, List, Optional, Sequence, Tuple
 from urllib.parse import urljoin
 
 import requests
 from bs4 import BeautifulSoup, Tag
+from crawl_settings import (
+    DATA_DIR,
+    DEFAULT_HEADERS,
+    FIELDNAMES,
+    TARGET_DAY_SPAN,
+)
 
 BASE_URL = "https://www.latino.ch"
 LISTING_PATH = "/events"
-TARGET_DAY_SPAN = 90
-OUTPUT_PATH = Path("data/events.csv")
-PUBLIC_PATH = Path("public/events.csv")
-FIELDNAMES = [
-    "date",
-    "time",
-    "name",
-    "flyer",
-    "url",
-    "host",
-    "city",
-    "region",
-    "labels",
-]
-HEADERS = {
-    "User-Agent": (
-        "latin-events-bern/1.0 (+https://www.latino.ch/events?locale=de)"
-    )
-}
+OUTPUT_PATH = DATA_DIR / "events_latino_ch.csv"
+HEADERS = DEFAULT_HEADERS
 
 
 @dataclass
@@ -277,8 +264,6 @@ def write_csv(events: Sequence[EventEntry]) -> None:
         writer.writeheader()
         for event in events:
             writer.writerow(event.to_row())
-    PUBLIC_PATH.parent.mkdir(parents=True, exist_ok=True)
-    shutil.copy(OUTPUT_PATH, PUBLIC_PATH)
 
 
 def main() -> None:

@@ -1,11 +1,14 @@
 # Latin Events Bern
 
-This project collects upcoming latin dance events from [latino.ch](https://www.latino.ch/events?locale=de) and publishes them in a mobile-friendly React table with region, label and date filters.
+This project collects upcoming latin dance events from [latino.ch](https://www.latino.ch/events?locale=de) and [bachata-bern.ch](https://bachata-bern.ch/events/) and publishes them in a mobile-friendly React table with region, label and date filters.
 
 ## Project structure
 
-- `scripts/crawl_events.py` – crawler that loads at least one month of events via the infinite scroll endpoint and writes them to CSV.
-- `data/events.csv` – source of truth for the dataset (also copied to `public/events.csv` for the frontend).
+- `scripts/crawl_events_latino_ch.py` – crawler for latino.ch (writes `data/events_latino_ch.csv`).
+- `scripts/crawl_events_bachata_bern_ch.py` – crawler for bachata-bern.ch (writes `data/events-bachata-bern.csv`).
+- `scripts/crawl_all_events.py` – runs both crawlers and merges their CSV outputs.
+- `data/events_latino_ch.csv` and `data/events-bachata-bern.csv` – per-site datasets.
+- `data/events.csv` – merged dataset produced by `crawl_all_events.py`.
 - `public/events.csv` – static asset that the UI fetches at runtime.
 - `src` – React app created with Vite.
 
@@ -29,18 +32,18 @@ python3 -m pip install -r requirements.txt
 
 ## Updating the data
 
-Run the crawler to refresh the CSV with at least 30 days of events:
+Run the master crawler to refresh and merge both sources:
 
 ```bash
-python3 scripts/crawl_events.py
+python3 scripts/crawl_all_events.py
 ```
 
 The script:
 
-1. Mimics the browser infinite-scroll requests (including the XHR headers).
-2. Parses single and clustered event rows.
-3. Normalises the location info and derives the requested macro-region.
-4. Writes the result to `data/events.csv` and copies the file to `public/events.csv`.
+1. Pulls events from latino.ch and bachata-bern.ch.
+2. Normalises location info and derives the macro-region.
+3. Deduplicates by date, time, name, and city.
+4. Writes `data/events_latino_ch.csv`, `data/events-bachata-bern.csv`, merges them into `data/events.csv`, and copies the merged file to `public/events.csv`.
 
 ## Developing the frontend
 
