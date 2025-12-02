@@ -14,6 +14,21 @@ from crawl_settings import (
     TARGET_DAY_SPAN,
 )
 
+LABEL_REPLACEMENTS = {
+    "social dance": "party",
+    "bachata party schweiz": "party",
+}
+
+
+def normalize_labels(raw_labels: Iterable[str]) -> List[str]:
+    normalized: List[str] = []
+    for label in raw_labels:
+        value = label.lower().strip()
+        value = LABEL_REPLACEMENTS.get(value, value)
+        if value and value not in normalized:
+            normalized.append(value)
+    return normalized
+
 BASE_URL = "https://bachata-bern.ch"
 API_PATH = "/wp-json/tribe/events/v1/events/"
 OUTPUT_PATH = DATA_DIR / "events-bachata-bern.csv"
@@ -168,14 +183,14 @@ def build_host(organizers: Iterable[dict]) -> str:
 def build_labels(item: dict) -> List[str]:
     labels: List[str] = []
     for cat in item.get("categories") or []:
-        label = clean_text(cat.get("name")).lower()
+        label = clean_text(cat.get("name"))
         if label:
             labels.append(label)
     for tag in item.get("tags") or []:
-        label = clean_text(tag.get("name")).lower()
+        label = clean_text(tag.get("name"))
         if label:
             labels.append(label)
-    return labels
+    return normalize_labels(labels)
 
 
 def build_event_entry(item: dict) -> EventEntry:

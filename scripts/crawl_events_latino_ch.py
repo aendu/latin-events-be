@@ -14,6 +14,21 @@ from crawl_settings import (
     TARGET_DAY_SPAN,
 )
 
+LABEL_REPLACEMENTS = {
+    "social dance": "party",
+    "bachata party schweiz": "party",
+}
+
+
+def normalize_labels(raw_labels: Iterable[str]) -> List[str]:
+    normalized = []
+    for label in raw_labels:
+        value = label.lower().strip()
+        value = LABEL_REPLACEMENTS.get(value, value)
+        if value and value not in normalized:
+            normalized.append(value)
+    return normalized
+
 BASE_URL = "https://www.latino.ch"
 LISTING_PATH = "/events"
 OUTPUT_PATH = DATA_DIR / "events_latino_ch.csv"
@@ -173,11 +188,13 @@ def build_events_from_cluster(event_div: Tag, event_date: str) -> Iterable[Event
     host, city = extract_address(event_div)
     flyer = extract_flyer(event_div)
     url = extract_url(event_div)
-    labels = [
-        clean_text(label.get_text()).lower()
-        for label in event_div.select(".label")
-        if clean_text(label.get_text())
-    ]
+    labels = normalize_labels(
+        [
+            clean_text(label.get_text())
+            for label in event_div.select(".label")
+            if clean_text(label.get_text())
+        ]
+    )
     region = determine_region(city)
     title_block = event_div.select_one(".title")
     if not title_block:
@@ -217,11 +234,13 @@ def build_event_from_block(event_div: Tag, event_date: str) -> Iterable[EventEnt
     time_el = event_div.select_one(".col-xs-5 span")
     title_el = event_div.select_one(".title")
     name = clean_text(title_el.get_text() if title_el else "")
-    labels = [
-        clean_text(label.get_text()).lower()
-        for label in event_div.select(".label")
-        if clean_text(label.get_text())
-    ]
+    labels = normalize_labels(
+        [
+            clean_text(label.get_text())
+            for label in event_div.select(".label")
+            if clean_text(label.get_text())
+        ]
+    )
     region = determine_region(city)
     return [
         EventEntry(
