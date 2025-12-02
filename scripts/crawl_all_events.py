@@ -6,7 +6,12 @@ from pathlib import Path
 
 from crawl_events_bachata_bern_ch import main as crawl_bachata
 from crawl_events_latino_ch import main as crawl_latino
-from crawl_settings import DATA_DIR, FIELDNAMES, PUBLIC_DIR
+from crawl_settings import (
+    DATA_DIR,
+    FIELDNAMES,
+    PUBLIC_DIR,
+    enable_http_logging,
+)
 
 ALL_EVENTS_PATH = DATA_DIR / "events.csv"
 PUBLIC_ALL_EVENTS_PATH = PUBLIC_DIR / "events.csv"
@@ -72,6 +77,7 @@ def write_all_events(rows: list[dict]) -> None:
 
 
 def main() -> None:
+    enable_http_logging()
     crawl_latino()
     crawl_bachata()
     latino_rows = read_events(DATA_DIR / "events_latino_ch.csv")

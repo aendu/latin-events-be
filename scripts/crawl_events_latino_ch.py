@@ -5,14 +5,16 @@ from datetime import date, datetime, timedelta
 from typing import Iterable, List, Optional, Sequence, Tuple
 from urllib.parse import urljoin
 
-import requests
-from bs4 import BeautifulSoup, Tag
 from crawl_settings import (
     DATA_DIR,
     DEFAULT_HEADERS,
+    build_headers,
     FIELDNAMES,
+    enable_http_logging,
     TARGET_DAY_SPAN,
 )
+import requests
+from bs4 import BeautifulSoup, Tag
 
 LABEL_REPLACEMENTS = {
     "social dance": "party",
@@ -62,7 +64,7 @@ class EventEntry:
 
 
 def fetch_chunk(session: requests.Session, params: dict) -> str:
-    headers = HEADERS.copy()
+    headers = build_headers()
     if params.get("format") == "js":
         headers.update(
             {
@@ -286,6 +288,7 @@ def write_csv(events: Sequence[EventEntry]) -> None:
 
 
 def main() -> None:
+    enable_http_logging()
     session = requests.Session()
     params = {"locale": "de"}
     html = fetch_chunk(session, params)

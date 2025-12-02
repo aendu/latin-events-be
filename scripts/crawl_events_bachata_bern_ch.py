@@ -5,14 +5,15 @@ from datetime import date, datetime, timedelta
 from typing import Iterable, List, Optional, Sequence, Tuple
 from urllib.parse import urljoin
 
-import requests
-
 from crawl_settings import (
     DATA_DIR,
     DEFAULT_HEADERS,
+    build_headers,
     FIELDNAMES,
+    enable_http_logging,
     TARGET_DAY_SPAN,
 )
+import requests
 
 LABEL_REPLACEMENTS = {
     "social dance": "party",
@@ -149,7 +150,7 @@ def fetch_events(session: requests.Session) -> List[dict]:
     events: List[dict] = []
     while True:
         response = session.get(
-            urljoin(BASE_URL, API_PATH), params=params, headers=HEADERS, timeout=30
+            urljoin(BASE_URL, API_PATH), params=params, headers=build_headers(), timeout=30
         )
         response.raise_for_status()
         data = response.json()
@@ -225,6 +226,7 @@ def write_csv(events: Sequence[EventEntry]) -> None:
 
 
 def main() -> None:
+    enable_http_logging()
     session = requests.Session()
     raw_events = fetch_events(session)
     if not raw_events:
