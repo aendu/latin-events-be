@@ -247,9 +247,10 @@ function App() {
 
   const showFloatingButton = showFloatingToggle && !filtersOpen
   const toggleIcon = filtersOpen ? arrowUpIcon : arrowDownIcon
+  const totalCount = events.length
   const visibleCount = visibleEvents.length
-  const totalCount = filteredEvents.length
-  const resultsLabel = hasMoreEvents ? `${visibleCount}/${totalCount} Events` : `${visibleCount} Events`
+  const filteredCount = filteredEvents.length
+  const resultsLabel = `${filteredCount}/${totalCount} Events` // hasMoreEvents ? `${filteredCount}/${totalCount} Events` : `${visibleCount} Events`
 
   return (
     <div className="app-shell">
