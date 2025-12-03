@@ -8,6 +8,7 @@ VALID_STYLE_CODES = {"S", "B", "K", "Z", "O"}
 STYLE_KEYWORDS = {
     "S": [
         r"\bsalsa\b",
+        r"\bsalsa[a-zäöüß]*",  # allow compounds like "Salsaare" or "Salsafestival"
         r"\bcasino\b",
         r"\bson\b",
         r"\btimba\b",

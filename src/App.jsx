@@ -32,7 +32,16 @@ const EVENTS_CSV_URL =
 const INITIAL_FILTERS = {
   region: 'Region Bern',
   label: 'ohne-kurse',
+  style: 'all',
   startDate: TODAY,
+}
+
+const STYLE_LABELS = {
+  S: 'Salsa',
+  B: 'Bachata',
+  K: 'Kizomba',
+  Z: 'Zouk',
+  O: 'Andere',
 }
 
 function normalizeRow(row) {
@@ -128,6 +137,16 @@ function App() {
     return Array.from(set).sort((a, b) => a.localeCompare(b))
   }, [events])
 
+  const styles = useMemo(() => {
+    const set = new Set()
+    events.forEach((event) => event.styles.forEach((style) => set.add(style)))
+    return Array.from(set).sort((a, b) => {
+      const labelA = STYLE_LABELS[a] || a
+      const labelB = STYLE_LABELS[b] || b
+      return labelA.localeCompare(labelB)
+    })
+  }, [events])
+
   useEffect(() => {
     const handleScroll = () => {
       const scrolled = window.scrollY
@@ -144,7 +163,7 @@ function App() {
 
   useEffect(() => {
     setVisibleSpanDays(INITIAL_VISIBLE_DAYS)
-  }, [filters.startDate, filters.region, filters.label])
+  }, [filters.startDate, filters.region, filters.label, filters.style])
 
   const filteredEvents = useMemo(() => {
     if (!events.length) {
@@ -155,6 +174,11 @@ function App() {
     return events.filter((event) => {
       if (filters.region !== 'all' && event.region !== filters.region) {
         return false
+      }
+      if (filters.style !== 'all') {
+        if (!event.styles.includes(filters.style)) {
+          return false
+        }
       }
       if (filters.label === 'ohne-kurse') {
         const hasEventTypes = event.labels.length > 0
@@ -324,6 +348,22 @@ function App() {
           </div>
 
           <div className="filter-group">
+            <label htmlFor="style-filter">Tanzstil</label>
+            <select
+              id="style-filter"
+              value={filters.style}
+              onChange={(event) => handleFilterChange('style', event.target.value)}
+            >
+              <option value="all">Alle Tanzstile</option>
+              {styles.map((styleCode) => (
+                <option key={styleCode} value={styleCode}>
+                  {STYLE_LABELS[styleCode] || styleCode}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="filter-group">
             <label htmlFor="start-date">Datum</label>
             <input
               type="date"
@@ -345,6 +385,19 @@ function App() {
                     className="chip-close"
                     onClick={() => handleFilterChange('region', 'all')}
                     aria-label="Region Filter entfernen"
+                  >
+                    ×
+                  </button>
+                </span>
+              )}
+              {filters.style !== 'all' && (
+                <span className="active-filter">
+                  Tanzstil: {STYLE_LABELS[filters.style] || filters.style}
+                  <button
+                    type="button"
+                    className="chip-close"
+                    onClick={() => handleFilterChange('style', 'all')}
+                    aria-label="Tanzstil Filter entfernen"
                   >
                     ×
                   </button>
