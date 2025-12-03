@@ -15,6 +15,7 @@ FIELDNAMES = [
     "city",
     "region",
     "source",
+    "style",
     "labels",
 ]
 

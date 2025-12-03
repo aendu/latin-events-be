@@ -13,6 +13,7 @@ from crawl_settings import (
     enable_http_logging,
     TARGET_DAY_SPAN,
 )
+from style_detection import detect_styles, styles_to_cell
 import requests
 
 LABEL_REPLACEMENTS = {
@@ -48,6 +49,7 @@ class EventEntry:
     region: str
     source: str
     labels: Sequence[str]
+    style: Sequence[str] = ()
 
     def to_row(self) -> dict:
         return {
@@ -60,6 +62,7 @@ class EventEntry:
             "city": self.city,
             "region": self.region,
             "source": self.source,
+            "style": styles_to_cell(self.style),
             "labels": "|".join(sorted(set(self.labels))),
         }
 
@@ -205,17 +208,21 @@ def build_event_entry(item: dict) -> EventEntry:
     city = build_city(venue)
     image = item.get("image") or {}
     flyer = image.get("url") or ""
+    labels = build_labels(item)
+    host = build_host(item.get("organizer"))
+    detail_text = clean_text(item.get("description"))
     return EventEntry(
         date=date_value,
         time=time_value,
         name=clean_text(item.get("title")),
         flyer=flyer,
         url=item.get("url") or "",
-        host=build_host(item.get("organizer")),
+        host=host,
         city=city,
         region=determine_region(city),
         source="bachata-bern.ch",
-        labels=build_labels(item),
+        labels=labels,
+        style=detect_styles(item.get("title"), labels, detail_text, host),
     )
 
 

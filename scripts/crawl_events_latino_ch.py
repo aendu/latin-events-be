@@ -13,6 +13,7 @@ from crawl_settings import (
     enable_http_logging,
     TARGET_DAY_SPAN,
 )
+from style_detection import detect_styles, styles_to_cell
 import requests
 from bs4 import BeautifulSoup, Tag
 
@@ -56,6 +57,7 @@ class EventEntry:
     region: str
     source: str
     labels: Sequence[str]
+    style: Sequence[str] = ()
 
     def to_row(self) -> dict:
         return {
@@ -68,6 +70,7 @@ class EventEntry:
             "city": self.city,
             "region": self.region,
             "source": self.source,
+            "style": styles_to_cell(self.style),
             "labels": "|".join(sorted(set(self.labels))),
         }
 
@@ -195,6 +198,30 @@ def determine_region(city_text: str) -> str:
     return "Region Zürich"
 
 
+def fetch_detail_text(session: requests.Session, url: str, cache: dict[str, str]) -> str:
+    if not url:
+        return ""
+    if url in cache:
+        return cache[url]
+    try:
+        response = session.get(url, headers=build_headers(), timeout=20)
+        response.raise_for_status()
+    except requests.RequestException:
+        cache[url] = ""
+        return ""
+    soup = BeautifulSoup(response.text, "html.parser")
+    candidates = []
+    for selector in (".event-description", ".content", ".event_text", "article"):
+        el = soup.select_one(selector)
+        if el:
+            candidates.append(el.get_text(" "))
+    if not candidates:
+        candidates.append(soup.get_text(" "))
+    text = clean_text(" ".join(candidates))[:8000]
+    cache[url] = text
+    return text
+
+
 def build_events_from_cluster(event_div: Tag, event_date: str) -> Iterable[EventEntry]:
     host, city = extract_address(event_div)
     flyer = extract_flyer(event_div)
@@ -232,7 +259,7 @@ def build_events_from_cluster(event_div: Tag, event_date: str) -> Iterable[Event
                 city=city,
                 region=region,
                 source="latino.ch",
-                labels=apply_name_rules(name_text, labels)
+                labels=apply_name_rules(name_text, labels),
             )
         )
     return entries
@@ -288,6 +315,13 @@ def parse_events(html: str) -> Tuple[List[EventEntry], List[str]]:
     ]
     date_markers = [d for d in date_markers if d]
     return chunk_events, date_markers
+
+
+def enrich_styles(session: requests.Session, events: Sequence[EventEntry]) -> None:
+    detail_cache: dict[str, str] = {}
+    for event in events:
+        detail_text = fetch_detail_text(session, event.url, detail_cache)
+        event.style = detect_styles(event.name, event.labels, detail_text, event.host)
 
 
 def write_csv(events: Sequence[EventEntry]) -> None:
@@ -349,6 +383,7 @@ def main() -> None:
             item.name.lower(),
         )
     )
+    enrich_styles(session, collected)
     write_csv(collected)
     span_desc = (
         f"{min_date.isoformat()} – {max_date.isoformat()}"

@@ -45,6 +45,12 @@ function normalizeRow(row) {
         .map((label) => label.trim())
         .filter(Boolean)
     : []
+  const styles = row.style
+    ? row.style
+        .split('|')
+        .map((style) => style.trim())
+        .filter(Boolean)
+    : []
   const dateObj = new Date(`${row.date}T00:00:00`)
   return {
     date: row.date,
@@ -58,6 +64,7 @@ function normalizeRow(row) {
     region: row.region || '',
     source: row.source || '',
     labels,
+    styles,
   }
 }
 

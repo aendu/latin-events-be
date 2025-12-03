@@ -25,6 +25,7 @@ def read_events(path: Path) -> list[dict]:
         rows = []
         for row in reader:
             row.setdefault("source", "")
+            row.setdefault("style", "")
             rows.append(row)
         return rows
 
