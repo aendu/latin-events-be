@@ -390,19 +390,6 @@ function App() {
                   </button>
                 </span>
               )}
-              {filters.style !== 'all' && (
-                <span className="active-filter">
-                  Tanzstil: {STYLE_LABELS[filters.style] || filters.style}
-                  <button
-                    type="button"
-                    className="chip-close"
-                    onClick={() => handleFilterChange('style', 'all')}
-                    aria-label="Tanzstil Filter entfernen"
-                  >
-                    ×
-                  </button>
-                </span>
-              )}
               {filters.label !== 'all' && (
                 <span className="active-filter">
                   Event-Typ: {filters.label === 'ohne-kurse' ? 'ohne Kurse' : filters.label}
@@ -411,6 +398,19 @@ function App() {
                     className="chip-close"
                     onClick={() => handleFilterChange('label', 'all')}
                     aria-label="Event-Typ Filter entfernen"
+                  >
+                    ×
+                  </button>
+                </span>
+              )}
+              {filters.style !== 'all' && (
+                <span className="active-filter">
+                  Tanzstil: {STYLE_LABELS[filters.style] || filters.style}
+                  <button
+                    type="button"
+                    className="chip-close"
+                    onClick={() => handleFilterChange('style', 'all')}
+                    aria-label="Tanzstil Filter entfernen"
                   >
                     ×
                   </button>
