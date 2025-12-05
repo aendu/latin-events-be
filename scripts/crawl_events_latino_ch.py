@@ -33,9 +33,12 @@ def normalize_labels(raw_labels: Iterable[str]) -> List[str]:
     return normalized
 
 
-def apply_name_rules(name: str, labels: List[str]) -> List[str]:
+def apply_name_rules(name: str, labels: List[str], host: str = "") -> List[str]:
     cleaned_name = name.lower()
+    cleaned_host = host.lower()
     if "dancing queens" in cleaned_name and "shopping" not in labels:
+        labels.append("shopping")
+    if "tanzshop" in cleaned_host and "shopping" not in labels:
         labels.append("shopping")
     return labels
 
@@ -210,14 +213,8 @@ def fetch_detail_text(session: requests.Session, url: str, cache: dict[str, str]
         cache[url] = ""
         return ""
     soup = BeautifulSoup(response.text, "html.parser")
-    candidates = []
-    for selector in (".event-description", ".content", ".event_text", "article"):
-        el = soup.select_one(selector)
-        if el:
-            candidates.append(el.get_text(" "))
-    if not candidates:
-        candidates.append(soup.get_text(" "))
-    text = clean_text(" ".join(candidates))[:8000]
+    detail_scope = soup.find(attrs={"itemtype": "http://schema.org/Event"}) or soup
+    text = clean_text(detail_scope.get_text(" "))[:8000]
     cache[url] = text
     return text
 
@@ -259,7 +256,7 @@ def build_events_from_cluster(event_div: Tag, event_date: str) -> Iterable[Event
                 city=city,
                 region=region,
                 source="latino.ch",
-                labels=apply_name_rules(name_text, labels),
+                labels=apply_name_rules(name_text, labels, host),
             )
         )
     return entries
@@ -280,7 +277,7 @@ def build_event_from_block(event_div: Tag, event_date: str) -> Iterable[EventEnt
             if clean_text(label.get_text())
         ]
     )
-    labels = apply_name_rules(name, labels)
+    labels = apply_name_rules(name, labels, host)
     region = determine_region(city)
     return [
         EventEntry(

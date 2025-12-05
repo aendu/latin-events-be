@@ -41,7 +41,6 @@ const STYLE_LABELS = {
   B: 'Bachata',
   K: 'Kizomba',
   Z: 'Zouk',
-  O: 'Andere',
 }
 
 function normalizeRow(row) {

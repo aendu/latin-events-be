@@ -1,10 +1,10 @@
 import re
 from typing import Iterable, List, Optional, Sequence
 
-VALID_STYLE_CODES = {"S", "B", "K", "Z", "O"}
+VALID_STYLE_CODES = {"S", "B", "K", "Z"}
 
-# Individual style keywords are geared towards precision. Broad "latin" or "party"
-# terms fall back to "O" (Other) to avoid false positives.
+# Individual style keywords are geared towards precision; we avoid broad fallbacks
+# so that unknown/unspecified events keep an empty style.
 STYLE_KEYWORDS = {
     "S": [
         r"\bsalsa\b",
@@ -56,8 +56,6 @@ def normalize_styles(styles: Iterable[str]) -> List[str]:
         code = style.strip().upper()
         if code in VALID_STYLE_CODES and code not in unique:
             unique.append(code)
-    if not unique:
-        unique.append("O")
     return sorted(unique)
 
 
@@ -82,22 +80,11 @@ def detect_styles(
 
     styles: list[str] = []
 
-    for combo_styles, pattern in COMBINATION_PATTERNS:
-        if re.search(pattern, folded):
-            styles.extend(combo_styles)
-
     for style_code, patterns in STYLE_KEYWORDS.items():
         for pattern in patterns:
             if re.search(pattern, folded):
                 styles.append(style_code)
                 break
-
-    # Salsa/Bachata style abbreviations such as "SB party" may have been picked
-    # up by the combination matcher already; leave the "Other" fallback only
-    # when nothing was detected.
-    if not styles:
-        if "latin" in folded or "latino" in folded:
-            styles.append("O")
 
     return normalize_styles(styles)
 
