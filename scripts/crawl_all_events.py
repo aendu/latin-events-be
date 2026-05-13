@@ -5,6 +5,7 @@ from difflib import SequenceMatcher
 from pathlib import Path
 
 from crawl_events_bachata_bern_ch import main as crawl_bachata
+from crawl_events_dimelocantando_ch import main as crawl_dimelocantando
 from crawl_events_latino_ch import main as crawl_latino
 from crawl_settings import (
     DATA_DIR,
@@ -85,9 +86,11 @@ def main() -> None:
     enable_http_logging()
     crawl_latino()
     crawl_bachata()
+    crawl_dimelocantando()
     latino_rows = read_events(DATA_DIR / "events_latino_ch.csv")
     bachata_rows = read_events(DATA_DIR / "events-bachata-bern.csv")
-    combined = dedupe_and_sort(latino_rows + bachata_rows)
+    dimelocantando_rows = read_events(DATA_DIR / "events-dimelocantando.csv")
+    combined = dedupe_and_sort(latino_rows + bachata_rows + dimelocantando_rows)
     if not combined:
         raise SystemExit("No events found to combine")
     write_all_events(combined)
