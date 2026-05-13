@@ -189,10 +189,6 @@ body {
   color: var(--color-highlight);
 }
 
-.test {
-  color: var(--color-highlight);
-}
-
 .filter-group select:focus,
 .filter-group input:focus {
   border-color: var(--color-accent);
