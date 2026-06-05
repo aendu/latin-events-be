@@ -7,13 +7,11 @@ from urllib.parse import urljoin
 
 from crawl_settings import (
     DATA_DIR,
-    DEFAULT_HEADERS,
-    build_headers,
     FIELDNAMES,
     enable_http_logging,
+    polite_get,
     TARGET_DAY_SPAN,
 )
-from style_detection import detect_styles, styles_to_cell
 import requests
 
 LABEL_REPLACEMENTS = {
@@ -34,7 +32,6 @@ def normalize_labels(raw_labels: Iterable[str]) -> List[str]:
 BASE_URL = "https://bachata-bern.ch"
 API_PATH = "/wp-json/tribe/events/v1/events/"
 OUTPUT_PATH = DATA_DIR / "events-bachata-bern.csv"
-HEADERS = DEFAULT_HEADERS
 
 
 @dataclass
@@ -49,7 +46,6 @@ class EventEntry:
     region: str
     source: str
     labels: Sequence[str]
-    style: Sequence[str] = ()
 
     def to_row(self) -> dict:
         return {
@@ -62,7 +58,6 @@ class EventEntry:
             "city": self.city,
             "region": self.region,
             "source": self.source,
-            "style": styles_to_cell(self.style),
             "labels": "|".join(sorted(set(self.labels))),
         }
 
@@ -154,10 +149,12 @@ def fetch_events(session: requests.Session) -> List[dict]:
     }
     events: List[dict] = []
     while True:
-        response = session.get(
-            urljoin(BASE_URL, API_PATH), params=params, headers=build_headers(), timeout=30
+        response = polite_get(
+            session,
+            urljoin(BASE_URL, API_PATH),
+            params=params,
+            timeout=30,
         )
-        response.raise_for_status()
         data = response.json()
         events.extend(data.get("events", []))
         total_pages = data.get("total_pages") or 1
@@ -210,7 +207,6 @@ def build_event_entry(item: dict) -> EventEntry:
     flyer = image.get("url") or ""
     labels = build_labels(item)
     host = build_host(item.get("organizer"))
-    detail_text = clean_text(item.get("description"))
     return EventEntry(
         date=date_value,
         time=time_value,
@@ -222,14 +218,13 @@ def build_event_entry(item: dict) -> EventEntry:
         region=determine_region(city),
         source="bachata-bern.ch",
         labels=labels,
-        style=detect_styles(item.get("title"), labels, detail_text, host),
     )
 
 
 def write_csv(events: Sequence[EventEntry]) -> None:
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     with OUTPUT_PATH.open("w", newline="", encoding="utf-8") as handle:
-        writer = csv.DictWriter(handle, fieldnames=FIELDNAMES)
+        writer = csv.DictWriter(handle, fieldnames=FIELDNAMES, lineterminator="\n")
         writer.writeheader()
         for event in events:
             writer.writerow(event.to_row())

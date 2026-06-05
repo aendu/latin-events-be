@@ -32,15 +32,7 @@ const EVENTS_CSV_URL =
 const INITIAL_FILTERS = {
   region: 'Region Bern',
   label: 'ohne-kurse',
-  style: 'all',
   startDate: TODAY,
-}
-
-const STYLE_LABELS = {
-  S: 'Salsa',
-  B: 'Bachata',
-  K: 'Kizomba',
-  Z: 'Zouk',
 }
 
 function normalizeRow(row) {
@@ -51,12 +43,6 @@ function normalizeRow(row) {
     ? row.labels
         .split('|')
         .map((label) => label.trim())
-        .filter(Boolean)
-    : []
-  const styles = row.style
-    ? row.style
-        .split('|')
-        .map((style) => style.trim())
         .filter(Boolean)
     : []
   const dateObj = new Date(`${row.date}T00:00:00`)
@@ -72,7 +58,6 @@ function normalizeRow(row) {
     region: row.region || '',
     source: row.source || '',
     labels,
-    styles,
   }
 }
 
@@ -122,7 +107,8 @@ function App() {
   )
 
   useEffect(() => {
-    loadCsvEvents()
+    const timeoutId = window.setTimeout(() => loadCsvEvents(), 0)
+    return () => window.clearTimeout(timeoutId)
   }, [loadCsvEvents])
 
   const regions = useMemo(() => {
@@ -134,16 +120,6 @@ function App() {
     const set = new Set()
     events.forEach((event) => event.labels.forEach((eventType) => set.add(eventType)))
     return Array.from(set).sort((a, b) => a.localeCompare(b))
-  }, [events])
-
-  const styles = useMemo(() => {
-    const set = new Set()
-    events.forEach((event) => event.styles.forEach((style) => set.add(style)))
-    return Array.from(set).sort((a, b) => {
-      const labelA = STYLE_LABELS[a] || a
-      const labelB = STYLE_LABELS[b] || b
-      return labelA.localeCompare(labelB)
-    })
   }, [events])
 
   useEffect(() => {
@@ -160,10 +136,6 @@ function App() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  useEffect(() => {
-    setVisibleSpanDays(INITIAL_VISIBLE_DAYS)
-  }, [filters.startDate, filters.region, filters.label, filters.style])
-
   const filteredEvents = useMemo(() => {
     if (!events.length) {
       return []
@@ -173,11 +145,6 @@ function App() {
     return events.filter((event) => {
       if (filters.region !== 'all' && event.region !== filters.region) {
         return false
-      }
-      if (filters.style !== 'all') {
-        if (!event.styles.includes(filters.style)) {
-          return false
-        }
       }
       if (filters.label === 'ohne-kurse') {
         const hasEventTypes = event.labels.length > 0
@@ -257,6 +224,7 @@ function App() {
   }, [visibleEvents])
 
   const handleFilterChange = (field, value) => {
+    setVisibleSpanDays(INITIAL_VISIBLE_DAYS)
     setFilters((prev) => ({
       ...prev,
       [field]: value,
@@ -282,9 +250,8 @@ function App() {
   const showFloatingButton = showFloatingToggle && !filtersOpen
   const toggleIcon = filtersOpen ? arrowUpIcon : arrowDownIcon
   const totalCount = events.length
-  const visibleCount = visibleEvents.length
   const filteredCount = filteredEvents.length
-  const resultsLabel = `${filteredCount}/${totalCount} Events` // hasMoreEvents ? `${filteredCount}/${totalCount} Events` : `${visibleCount} Events`
+  const resultsLabel = `${filteredCount}/${totalCount} Events`
 
   return (
     <div className="app-shell">
@@ -347,22 +314,6 @@ function App() {
           </div>
 
           <div className="filter-group">
-            <label htmlFor="style-filter">Tanzstil</label>
-            <select
-              id="style-filter"
-              value={filters.style}
-              onChange={(event) => handleFilterChange('style', event.target.value)}
-            >
-              <option value="all">Alle Tanzstile</option>
-              {styles.map((styleCode) => (
-                <option key={styleCode} value={styleCode}>
-                  {STYLE_LABELS[styleCode] || styleCode}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="filter-group">
             <label htmlFor="start-date">Datum</label>
             <input
               type="date"
@@ -397,19 +348,6 @@ function App() {
                     className="chip-close"
                     onClick={() => handleFilterChange('label', 'all')}
                     aria-label="Event-Typ Filter entfernen"
-                  >
-                    ×
-                  </button>
-                </span>
-              )}
-              {filters.style !== 'all' && (
-                <span className="active-filter">
-                  Tanzstil: {STYLE_LABELS[filters.style] || filters.style}
-                  <button
-                    type="button"
-                    className="chip-close"
-                    onClick={() => handleFilterChange('style', 'all')}
-                    aria-label="Tanzstil Filter entfernen"
                   >
                     ×
                   </button>

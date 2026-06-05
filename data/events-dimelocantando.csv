@@ -1,16 +1,14 @@
-date,time,name,flyer,url,host,city,region,source,style,labels
-2026-05-13,,JAM im DimeloCantando,https://dimelocantando.ch/storage/blockimages/1761072463_536.jpg,https://dimelocantando.ch/home!169,DimeloCantando,3008 Bern,Region Bern,dimelocantando.ch,,party
-2026-05-20,,JAM im DimeloCantando,https://dimelocantando.ch/storage/blockimages/1761072463_536.jpg,https://dimelocantando.ch/home!169,DimeloCantando,3008 Bern,Region Bern,dimelocantando.ch,,party
-2026-05-22,,Radio Bossa,https://dimelocantando.ch/storage/blockimages/1778432650_116.jpg,https://dimelocantando.ch/home!208,DimeloCantando,3008 Bern,Region Bern,dimelocantando.ch,,
-2026-05-27,,JAM im DimeloCantando,https://dimelocantando.ch/storage/blockimages/1761072463_536.jpg,https://dimelocantando.ch/home!169,DimeloCantando,3008 Bern,Region Bern,dimelocantando.ch,,party
-2026-05-29,,Armando Gonzalez,https://dimelocantando.ch/storage/blockimages/1777222406_257.jpg,https://dimelocantando.ch/home!217,DimeloCantando,3008 Bern,Region Bern,dimelocantando.ch,,party
-2026-06-03,,JAM im DimeloCantando,https://dimelocantando.ch/storage/blockimages/1761072463_536.jpg,https://dimelocantando.ch/home!169,DimeloCantando,3008 Bern,Region Bern,dimelocantando.ch,,party
-2026-06-10,,JAM im DimeloCantando,https://dimelocantando.ch/storage/blockimages/1761072463_536.jpg,https://dimelocantando.ch/home!169,DimeloCantando,3008 Bern,Region Bern,dimelocantando.ch,,party
-2026-06-17,,JAM im DimeloCantando,https://dimelocantando.ch/storage/blockimages/1761072463_536.jpg,https://dimelocantando.ch/home!169,DimeloCantando,3008 Bern,Region Bern,dimelocantando.ch,,party
-2026-06-24,,JAM im DimeloCantando,https://dimelocantando.ch/storage/blockimages/1761072463_536.jpg,https://dimelocantando.ch/home!169,DimeloCantando,3008 Bern,Region Bern,dimelocantando.ch,,party
-2026-07-01,,JAM im DimeloCantando,https://dimelocantando.ch/storage/blockimages/1761072463_536.jpg,https://dimelocantando.ch/home!169,DimeloCantando,3008 Bern,Region Bern,dimelocantando.ch,,party
-2026-07-08,,JAM im DimeloCantando,https://dimelocantando.ch/storage/blockimages/1761072463_536.jpg,https://dimelocantando.ch/home!169,DimeloCantando,3008 Bern,Region Bern,dimelocantando.ch,,party
-2026-07-15,,JAM im DimeloCantando,https://dimelocantando.ch/storage/blockimages/1761072463_536.jpg,https://dimelocantando.ch/home!169,DimeloCantando,3008 Bern,Region Bern,dimelocantando.ch,,party
-2026-07-22,,JAM im DimeloCantando,https://dimelocantando.ch/storage/blockimages/1761072463_536.jpg,https://dimelocantando.ch/home!169,DimeloCantando,3008 Bern,Region Bern,dimelocantando.ch,,party
-2026-07-29,,JAM im DimeloCantando,https://dimelocantando.ch/storage/blockimages/1761072463_536.jpg,https://dimelocantando.ch/home!169,DimeloCantando,3008 Bern,Region Bern,dimelocantando.ch,,party
-2026-08-05,,JAM im DimeloCantando,https://dimelocantando.ch/storage/blockimages/1761072463_536.jpg,https://dimelocantando.ch/home!169,DimeloCantando,3008 Bern,Region Bern,dimelocantando.ch,,party
+date,time,name,flyer,url,host,city,region,source,labels
+2026-06-10,,JAM im DimeloCantando,https://dimelocantando.ch/storage/blockimages/1761072463_536.jpg,https://dimelocantando.ch/home!169,DimeloCantando,3008 Bern,Region Bern,dimelocantando.ch,party
+2026-06-17,,JAM im DimeloCantando,https://dimelocantando.ch/storage/blockimages/1761072463_536.jpg,https://dimelocantando.ch/home!169,DimeloCantando,3008 Bern,Region Bern,dimelocantando.ch,party
+2026-06-24,,JAM im DimeloCantando,https://dimelocantando.ch/storage/blockimages/1761072463_536.jpg,https://dimelocantando.ch/home!169,DimeloCantando,3008 Bern,Region Bern,dimelocantando.ch,party
+2026-07-01,,JAM im DimeloCantando,https://dimelocantando.ch/storage/blockimages/1761072463_536.jpg,https://dimelocantando.ch/home!169,DimeloCantando,3008 Bern,Region Bern,dimelocantando.ch,party
+2026-07-08,,JAM im DimeloCantando,https://dimelocantando.ch/storage/blockimages/1761072463_536.jpg,https://dimelocantando.ch/home!169,DimeloCantando,3008 Bern,Region Bern,dimelocantando.ch,party
+2026-07-15,,JAM im DimeloCantando,https://dimelocantando.ch/storage/blockimages/1761072463_536.jpg,https://dimelocantando.ch/home!169,DimeloCantando,3008 Bern,Region Bern,dimelocantando.ch,party
+2026-07-22,,JAM im DimeloCantando,https://dimelocantando.ch/storage/blockimages/1761072463_536.jpg,https://dimelocantando.ch/home!169,DimeloCantando,3008 Bern,Region Bern,dimelocantando.ch,party
+2026-07-29,,JAM im DimeloCantando,https://dimelocantando.ch/storage/blockimages/1761072463_536.jpg,https://dimelocantando.ch/home!169,DimeloCantando,3008 Bern,Region Bern,dimelocantando.ch,party
+2026-08-05,,JAM im DimeloCantando,https://dimelocantando.ch/storage/blockimages/1761072463_536.jpg,https://dimelocantando.ch/home!169,DimeloCantando,3008 Bern,Region Bern,dimelocantando.ch,party
+2026-08-12,,JAM im DimeloCantando,https://dimelocantando.ch/storage/blockimages/1761072463_536.jpg,https://dimelocantando.ch/home!169,DimeloCantando,3008 Bern,Region Bern,dimelocantando.ch,party
+2026-08-19,,JAM im DimeloCantando,https://dimelocantando.ch/storage/blockimages/1761072463_536.jpg,https://dimelocantando.ch/home!169,DimeloCantando,3008 Bern,Region Bern,dimelocantando.ch,party
+2026-08-26,,JAM im DimeloCantando,https://dimelocantando.ch/storage/blockimages/1761072463_536.jpg,https://dimelocantando.ch/home!169,DimeloCantando,3008 Bern,Region Bern,dimelocantando.ch,party
+2026-09-02,,JAM im DimeloCantando,https://dimelocantando.ch/storage/blockimages/1761072463_536.jpg,https://dimelocantando.ch/home!169,DimeloCantando,3008 Bern,Region Bern,dimelocantando.ch,party

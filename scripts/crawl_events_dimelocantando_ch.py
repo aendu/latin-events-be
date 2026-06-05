@@ -12,10 +12,10 @@ from crawl_settings import (
     DATA_DIR,
     FIELDNAMES,
     TARGET_DAY_SPAN,
-    build_headers,
     enable_http_logging,
+    polite_get,
 )
-from style_detection import detect_styles, styles_to_cell
+from style_detection import detect_styles
 
 BASE_URL = "https://dimelocantando.ch"
 HOME_PATH = "/de-CH/home"
@@ -107,7 +107,6 @@ class EventEntry:
     region: str
     source: str
     labels: Sequence[str]
-    style: Sequence[str] = ()
 
     def to_row(self) -> dict:
         return {
@@ -120,7 +119,6 @@ class EventEntry:
             "city": self.city,
             "region": self.region,
             "source": self.source,
-            "style": styles_to_cell(self.style),
             "labels": "|".join(sorted(set(self.labels))),
         }
 
@@ -132,8 +130,7 @@ def clean_text(value: Optional[str]) -> str:
 
 
 def fetch_page(session: requests.Session, url: str) -> str:
-    response = session.get(url, headers=build_headers(), timeout=30)
-    response.raise_for_status()
+    response = polite_get(session, url, timeout=30)
     return response.text
 
 
@@ -332,7 +329,6 @@ def build_entries_from_detail(
             region=REGION,
             source="dimelocantando.ch",
             labels=labels,
-            style=styles,
         )
         for event_date in event_dates
     ]
@@ -341,7 +337,7 @@ def build_entries_from_detail(
 def write_csv(events: Sequence[EventEntry]) -> None:
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     with OUTPUT_PATH.open("w", newline="", encoding="utf-8") as handle:
-        writer = csv.DictWriter(handle, fieldnames=FIELDNAMES)
+        writer = csv.DictWriter(handle, fieldnames=FIELDNAMES, lineterminator="\n")
         writer.writeheader()
         for event in events:
             writer.writerow(event.to_row())

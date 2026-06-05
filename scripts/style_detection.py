@@ -87,7 +87,3 @@ def detect_styles(
                 break
 
     return normalize_styles(styles)
-
-
-def styles_to_cell(styles: Iterable[str]) -> str:
-    return "|".join(normalize_styles(styles))

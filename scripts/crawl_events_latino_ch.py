@@ -7,13 +7,11 @@ from urllib.parse import urljoin
 
 from crawl_settings import (
     DATA_DIR,
-    DEFAULT_HEADERS,
-    build_headers,
     FIELDNAMES,
     enable_http_logging,
+    polite_get,
     TARGET_DAY_SPAN,
 )
-from style_detection import detect_styles, styles_to_cell
 import requests
 from bs4 import BeautifulSoup, Tag
 
@@ -45,7 +43,6 @@ def apply_name_rules(name: str, labels: List[str], host: str = "") -> List[str]:
 BASE_URL = "https://www.latino.ch"
 LISTING_PATH = "/events"
 OUTPUT_PATH = DATA_DIR / "events_latino_ch.csv"
-HEADERS = DEFAULT_HEADERS
 
 
 @dataclass
@@ -60,7 +57,6 @@ class EventEntry:
     region: str
     source: str
     labels: Sequence[str]
-    style: Sequence[str] = ()
 
     def to_row(self) -> dict:
         return {
@@ -73,13 +69,12 @@ class EventEntry:
             "city": self.city,
             "region": self.region,
             "source": self.source,
-            "style": styles_to_cell(self.style),
             "labels": "|".join(sorted(set(self.labels))),
         }
 
 
 def fetch_chunk(session: requests.Session, params: dict) -> str:
-    headers = build_headers()
+    headers = {}
     if params.get("format") == "js":
         headers.update(
             {
@@ -87,10 +82,10 @@ def fetch_chunk(session: requests.Session, params: dict) -> str:
                 "Accept": "text/javascript, text/html, application/xhtml+xml, */*",
             }
         )
-    response = session.get(
+    response = polite_get(
+        session,
         urljoin(BASE_URL, LISTING_PATH), params=params, headers=headers, timeout=30
     )
-    response.raise_for_status()
     return response.text
 
 
@@ -201,24 +196,6 @@ def determine_region(city_text: str) -> str:
     return "Region Zürich"
 
 
-def fetch_detail_text(session: requests.Session, url: str, cache: dict[str, str]) -> str:
-    if not url:
-        return ""
-    if url in cache:
-        return cache[url]
-    try:
-        response = session.get(url, headers=build_headers(), timeout=20)
-        response.raise_for_status()
-    except requests.RequestException:
-        cache[url] = ""
-        return ""
-    soup = BeautifulSoup(response.text, "html.parser")
-    detail_scope = soup.find(attrs={"itemtype": "http://schema.org/Event"}) or soup
-    text = clean_text(detail_scope.get_text(" "))[:8000]
-    cache[url] = text
-    return text
-
-
 def build_events_from_cluster(event_div: Tag, event_date: str) -> Iterable[EventEntry]:
     host, city = extract_address(event_div)
     flyer = extract_flyer(event_div)
@@ -314,17 +291,10 @@ def parse_events(html: str) -> Tuple[List[EventEntry], List[str]]:
     return chunk_events, date_markers
 
 
-def enrich_styles(session: requests.Session, events: Sequence[EventEntry]) -> None:
-    detail_cache: dict[str, str] = {}
-    for event in events:
-        detail_text = fetch_detail_text(session, event.url, detail_cache)
-        event.style = detect_styles(event.name, event.labels, detail_text, event.host)
-
-
 def write_csv(events: Sequence[EventEntry]) -> None:
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     with OUTPUT_PATH.open("w", newline="", encoding="utf-8") as handle:
-        writer = csv.DictWriter(handle, fieldnames=FIELDNAMES)
+        writer = csv.DictWriter(handle, fieldnames=FIELDNAMES, lineterminator="\n")
         writer.writeheader()
         for event in events:
             writer.writerow(event.to_row())
@@ -380,7 +350,6 @@ def main() -> None:
             item.name.lower(),
         )
     )
-    enrich_styles(session, collected)
     write_csv(collected)
     span_desc = (
         f"{min_date.isoformat()} – {max_date.isoformat()}"

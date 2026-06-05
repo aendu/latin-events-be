@@ -1,8 +1,10 @@
 import csv
+import logging
 import re
 import shutil
 from difflib import SequenceMatcher
 from pathlib import Path
+from typing import Callable
 
 from crawl_events_bachata_bern_ch import main as crawl_bachata
 from crawl_events_dimelocantando_ch import main as crawl_dimelocantando
@@ -25,8 +27,8 @@ def read_events(path: Path) -> list[dict]:
         reader = csv.DictReader(handle)
         rows = []
         for row in reader:
+            row = {field: row.get(field, "") for field in FIELDNAMES}
             row.setdefault("source", "")
-            row.setdefault("style", "")
             rows.append(row)
         return rows
 
@@ -74,7 +76,7 @@ def dedupe_and_sort(rows: list[dict]) -> list[dict]:
 def write_all_events(rows: list[dict]) -> None:
     ALL_EVENTS_PATH.parent.mkdir(parents=True, exist_ok=True)
     with ALL_EVENTS_PATH.open("w", newline="", encoding="utf-8") as handle:
-        writer = csv.DictWriter(handle, fieldnames=FIELDNAMES)
+        writer = csv.DictWriter(handle, fieldnames=FIELDNAMES, lineterminator="\n")
         writer.writeheader()
         for row in rows:
             writer.writerow(row)
@@ -82,11 +84,46 @@ def write_all_events(rows: list[dict]) -> None:
     shutil.copy(ALL_EVENTS_PATH, PUBLIC_ALL_EVENTS_PATH)
 
 
+def run_source_crawler(name: str, crawler: Callable[[], None], output_path: Path) -> bool:
+    try:
+        crawler()
+        return True
+    except SystemExit as exc:
+        error = exc
+    except Exception as exc:
+        error = exc
+    if output_path.exists():
+        logging.warning(
+            "%s crawler failed with %s; reusing existing %s",
+            name,
+            error,
+            output_path,
+        )
+        return False
+    logging.warning(
+        "%s crawler failed with %s and no fallback CSV exists at %s; skipping source",
+        name,
+        error,
+        output_path,
+    )
+    return False
+
+
 def main() -> None:
     enable_http_logging()
-    crawl_latino()
-    crawl_bachata()
-    crawl_dimelocantando()
+    source_status = {
+        "latino.ch": run_source_crawler(
+            "latino.ch", crawl_latino, DATA_DIR / "events_latino_ch.csv"
+        ),
+        "bachata-bern.ch": run_source_crawler(
+            "bachata-bern.ch", crawl_bachata, DATA_DIR / "events-bachata-bern.csv"
+        ),
+        "dimelocantando.ch": run_source_crawler(
+            "dimelocantando.ch",
+            crawl_dimelocantando,
+            DATA_DIR / "events-dimelocantando.csv",
+        ),
+    }
     latino_rows = read_events(DATA_DIR / "events_latino_ch.csv")
     bachata_rows = read_events(DATA_DIR / "events-bachata-bern.csv")
     dimelocantando_rows = read_events(DATA_DIR / "events-dimelocantando.csv")
@@ -94,6 +131,9 @@ def main() -> None:
     if not combined:
         raise SystemExit("No events found to combine")
     write_all_events(combined)
+    failed_sources = [name for name, succeeded in source_status.items() if not succeeded]
+    if failed_sources:
+        print(f"Reused fallback data for: {', '.join(failed_sources)}")
     print(
         f"Wrote {len(combined)} combined events to {ALL_EVENTS_PATH} and {PUBLIC_ALL_EVENTS_PATH}"
     )
