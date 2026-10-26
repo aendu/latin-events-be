@@ -258,7 +258,9 @@ function App() {
       <div className={`sticky-panel ${filtersOpen ? 'is-open' : 'is-collapsed'}`}>
         <header className="page-header">
           <div className="brand">
-            <img src={logo} alt="Latin Events Switzerland" className="brand-logo" />
+            <a href="./" className="brand-logo-link" aria-label="Latin Events Switzerland – Startseite">
+              <img src={logo} alt="Latin Events Switzerland" className="brand-logo" />
+            </a>
             <div className="brand-text">
               <p className="eyebrow">Latin Events Switzerland</p>
             </div>
