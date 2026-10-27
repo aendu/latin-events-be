@@ -59,6 +59,153 @@ body {
   border: 1px solid var(--color-highlight);
 }
 
+.brand-logo-button {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.brand-logo-link:focus-visible {
+  outline: 3px solid var(--color-highlight);
+  outline-offset: 4px;
+}
+
+.install-dialog {
+  box-sizing: border-box;
+  width: min(500px, calc(100% - 2rem));
+  max-height: calc(100dvh - 2rem);
+  overflow-y: auto;
+  padding: 2rem 1.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: 1.2rem;
+  background: var(--color-panel);
+  color: var(--color-dark);
+  box-shadow: 0 20px 60px #0004;
+}
+
+.install-dialog::backdrop {
+  background: #0f0d0cb3;
+}
+
+.install-dialog h2 {
+  margin: 0;
+  padding-right: 2rem;
+  font-size: calc(1.3rem - 5px);
+  line-height: 1.3;
+}
+
+.install-dialog ol {
+  padding-left: 1.4rem;
+  margin-block: 1.5rem;
+}
+
+.install-dialog li + li {
+  margin-top: 1rem;
+}
+
+.install-dialog button {
+  width: 100%;
+  min-height: 44px;
+  border: 0;
+  border-radius: 0.7rem;
+  background: var(--color-chip);
+  color: white;
+  font: inherit;
+  cursor: pointer;
+}
+
+.install-close-form {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+}
+
+.install-dialog .install-close-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  border-radius: 50%;
+  background: var(--color-chip);
+  color: #fff;
+  box-shadow: 0 2px 8px #3f150733;
+}
+
+.install-dialog .install-close-button:hover {
+  background: var(--color-bg);
+}
+
+.install-dialog .install-close-button:focus-visible {
+  outline: 3px solid var(--color-accent-dark);
+  outline-offset: 3px;
+}
+
+.install-sharing {
+  margin-top: 2rem;
+}
+
+.install-page-link {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.install-page-link a {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  color: var(--color-chip);
+  text-decoration: underline;
+  font-size: 0.9rem;
+}
+
+.install-dialog .install-copy-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 44px;
+  width: 44px;
+  padding: 0;
+  background: transparent;
+  color: var(--color-chip);
+}
+
+.install-dialog .install-copy-button:hover {
+  color: var(--color-accent-dark);
+}
+
+.install-dialog .install-copy-button:focus-visible {
+  outline: 2px solid var(--color-chip);
+  outline-offset: 2px;
+}
+
+.install-copy-status {
+  flex: 1 1 5rem;
+  min-width: 0;
+  font-size: 0.85rem;
+  color: var(--color-chip);
+}
+
+.install-credit {
+  margin: 2rem 0 0;
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--color-muted);
+}
+
+.install-credit-love {
+  color: var(--color-chip);
+}
+
+.install-credit a {
+  color: var(--color-chip);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .brand-text h1 {
   margin: 0;
   font-size: clamp(1.6rem, 3vw, 2.1rem);

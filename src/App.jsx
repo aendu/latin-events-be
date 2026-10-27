@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Papa from 'papaparse'
 import arrowDownIcon from './assets/icons/basic_magnifier.svg'
 import arrowUpIcon from './assets/icons/arrows_circle_up.svg'
-import logo from './assets/logo.webp'
+import InstallLogo from './InstallLogo.jsx'
 import './App.css'
 
 const SHORT_DATE = new Intl.DateTimeFormat('de-CH', {
@@ -258,9 +258,7 @@ function App() {
       <div className={`sticky-panel ${filtersOpen ? 'is-open' : 'is-collapsed'}`}>
         <header className="page-header">
           <div className="brand">
-            <a href="./" className="brand-logo-link" aria-label="Latin Events Switzerland – Startseite">
-              <img src={logo} alt="Latin Events Switzerland" className="brand-logo" />
-            </a>
+            <InstallLogo />
             <div className="brand-text">
               <p className="eyebrow">Latin Events Switzerland</p>
             </div>
